@@ -27,6 +27,7 @@ import ChangeColorOfTheSquare from "./components/ChangeColorOfTheSquare";
 import GridWithIncrementalValues from "./components/GridWithIncrementalValues";
 import StopWatch from "./components/StopWatch";
 import TabForm from "./components/TabForm";
+import OtpInput from "./components/OtpInput";
 
 function App() {
   // const [count, setCount] = useState(0)
@@ -87,7 +88,8 @@ function App() {
       {/* <ChangeColorOfTheSquare/> */}
       {/* <GridWithIncrementalValues/> */}
       {/* <StopWatch/> */}
-    <TabForm/>
+      {/* <TabForm/> */}
+      <OtpInput/>
     </>
   );
 }
