@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rock Paper Scissors Lizard Game</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin-top: 40px;
+      }
+      .choices {
+        padding: 2rem;
+      }
+
+      button {
+        padding: 10px 16px;
+        margin: 6px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+      #result {
+        margin-top: 20px;
+        font-size: 20px;
+        font-weight: bold;
+      }
+
+      .score {
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>🪨 Rock Paper Scissors Lizard Spock</h2>
+    <div class="choices">
+      <button onclick="handleClick('rock')">Rock</button>
+      <button onclick="handleClick('paper')">Paper</button>
+      <button onclick="handleClick('scissors')">Scissors</button>
+      <button onclick="handleClick('lizard')">Lizard</button>
+      <button onclick="handleClick('spock')">Spock</button>
+    </div>
+    <div id="result">Choose your move!</div>
+    <div class="score">
+      Player: <span id="playerScore">0</span> | Bot:
+      <span id="botScore">0</span>
+    </div>
+    <script>
+      const rules = {
+        rock: ["scissors", "lizard"],
+        paper: ["rock", "spock"],
+        scissors: ["paper", "lizard"],
+        lizard: ["spock", "paper"],
+        spock: ["scissors", "rock"],
+      };
+      const choices = Object.keys(rules);
+      let playerScore = 0;
+      let botScore = 0;
+
+      function handleClick(playerChoice) {
+        // console.log("playerChoice is ::: ", playerChoice);
+        let message = "";
+        let randomNumber = Math.floor(Math.random() * choices.length);
+        let botChoice = choices[randomNumber];
+        if (botChoice === playerChoice) {
+          message = "It's a Draw ";
+        } else if (rules[playerChoice].includes(botChoice)) {
+          resultText = `You Win 🎉 ${capitalize(playerChoice)} beats ${capitalize(botChoice)}`;
+          playerScore++;
+        } else {
+          resultText = `Bot Wins 🤖 ${capitalize(botChoice)} beats ${capitalize(playerChoice)}`;
+          botScore++;
+        }
+        document.getElementsByClassName("result").textContent = message;
+        document.getElementById("playerScore").textContent = playerScore;
+        document.getElementById("botScore").textContent = botScore;
+      }
+
+      function capitalize(word) {
+        return word.charAt(0).toUpperCase() + word.slice(1);
+      }
+    </script>
+  </body>
+</html>

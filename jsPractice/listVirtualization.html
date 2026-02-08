@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Virtualized List with IntersectionObserver</title>
+    <style>
+#list-container {
+  height: 400px;
+  width: 400px;
+  overflow: auto;
+  border: 1px solid #ccc;
+  position: relative;
+}
+.virtual-item {
+  box-sizing: border-box;
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+</style>
+
+ 
+    </style>
+  </head>
+  <body>
+    <div id="list-container"></div>
+
+    <script>
+      class VirtualList{
+        constructor(container , options={}){
+           this.container=container;
+           this.itemHeight=options.itemHeight || 40;
+           this.chunkSize=options.chunkSize || 20;
+           this.items=options.items || [];
+           this.renderItems=options.renderItems ; // UI
+           this.chunks=new Map(); 
+           this.observer=null;
+           this.init(); 
+        }
+        init(){
+          this.container.style.position="relative";
+          this.container.style.overflow="auto";
+          this.container.style.height=this.container.style.height || '400px'
+
+          this.content=document.createElement("div");
+          this.content.style.position='relative';
+          this.content.style.height=`${this.itemHeight * this.items.length}px`;
+          this.container.appendChild(this.content);
+          this.setUpObserver();
+          this.createChunks();
+        }
+        totalChunks(){
+          return Math.ceil(this.items.length/this.chunkSize)
+        }
+        getChunkHeight(){
+          return this.chunkSize * this.itemHeight;
+        }
+        setUpObserver(){
+           this.observer = new IntersectionObserver((entires)=>{
+                  entires.forEach((entry)=>{
+                    const chunkIndex=parseInt(entry.target.dataset.chunk)
+                    if(entry.isIntersecting){
+                      this.mountChunk(chunkIndex)
+                    }
+                    else{
+                      this.unmountChunk(chunkIndex)
+                    }
+                  })
+           },{
+            root:this.container,
+            rootMargin:"600px 0px",
+            threshold:0
+           })
+        }
+        createChunks(){
+           const fragment=document.createDocumentFragment();
+           for(let i=0;i<this.totalChunks();i++){
+            let startIndex=i*this.chunkSize;
+            let chunkHeight=Math.min(this.chunkSize,this.items.length-startIndex)*this.itemHeight;
+            const chunkElement=document.createElement('div');
+            chunkElement.className="virtual-chunk";
+            chunkElement.dataset.chunk=i;
+            chunkElement.style.cssText=`position:absolute;top:${startIndex*this.itemHeight}px;left:0;right:0;height:${chunkHeight}px`;
+            
+            fragment.appendChild(chunkElement);
+            this.chunks.set(i,{element:chunkElement,mounted:false})
+            this.observer.observe(chunkElement)
+           }
+           this.content.appendChild(fragment)
+        }
+      mountChunk(index){
+          const chunk=this.chunks.get(index)
+          if(!chunk || chunk.mounted) return ;
+          const startIndex=index*this.chunkSize;
+          const endIndex=Math.min(startIndex+this.chunkSize,this.items.length);
+          let html=""
+          for(let i=startIndex;i<endIndex;i++){
+            html+=`<div class="virtual-item" style="height:${this.itemHeight}px;">${this.renderItems(this.items[i],i)}</div>`
+          }
+          chunk.element.innerHTML=html;
+          chunk.mounted=true;
+      }
+      unmountChunk(index){
+         const chunk=this.chunks.get(index)
+          if(!chunk || !chunk.mounted) return ;
+           chunk.element.innerHTML="";
+           chunk.mounted=false;
+      }
+      destroy(){
+        this.observer?.disconnect()
+        this.container.innerHTML=""
+        this.chunks.clear();
+      }
+      }
+     
+      const items = Array.from({ length: 100000 }, (_, index) => ({
+        id: index,
+        name: `Item ${index + 1}`,
+        description: `Description for item ${index + 1}`,
+      }));
+      const virtaulList = new VirtualList(
+        document.getElementById("list-container"),
+        {
+          items,
+          itemHeight: 60,
+          chunkSize:20,
+          buffer:2,
+          renderItems: (item, indeex) => `
+  <div style="display:flex ; justify-content:space-between">
+    <strong>${item.name}</strong>
+    <span style="color:#666">${item.description}</span>
+  `,
+        },
+      );
+    </script>
+  </body>
+</html>
