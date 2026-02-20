@@ -28,6 +28,8 @@ import GridWithIncrementalValues from "./components/GridWithIncrementalValues";
 import StopWatch from "./components/StopWatch";
 import TabForm from "./components/TabForm";
 import OtpInput from "./components/OtpInput";
+import TodoList from "./components/TodoList";
+import TictacToe from "./components/TictacToe";
 
 function App() {
   // const [count, setCount] = useState(0)
@@ -89,7 +91,9 @@ function App() {
       {/* <GridWithIncrementalValues/> */}
       {/* <StopWatch/> */}
       {/* <TabForm/> */}
-      <OtpInput/>
+      {/* <OtpInput/> */}
+      {/* <TodoList/> */}
+      <TictacToe/>
     </>
   );
 }

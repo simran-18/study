@@ -27,6 +27,14 @@ const OtpInput = () => {
         }
      }
   }
+  function handleFocus(index){
+    for(let i=0;i<index;i++){
+       if(otp[i]===""){
+        inputRefs.current[i].focus()
+        return ;
+       }
+    }
+  }
   return (
     <div style={{
             display:'flex',
@@ -51,6 +59,7 @@ const OtpInput = () => {
                  type="text"
                  maxLength="1"
                  ref={el=>inputRefs.current[index]=el}
+                 onFocus={(e)=>handleFocus(index)}
                  onChange={(e)=>handleChange(e,index)}
                  onKeyDown={(e)=>handleKeyDown(e,index)}
                 />
